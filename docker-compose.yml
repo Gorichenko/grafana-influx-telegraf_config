@@ -1,0 +1,38 @@
+version: '2'
+
+services:
+
+  influxdb:
+    build: influxdb
+    env_file: conf.env
+    container_name: influxdb
+    ports:
+    - '8086:8086'
+    volumes:
+    - ./influxdb_data:/var/lib/influxdb
+
+# =========================================
+
+  grafana:
+    build: grafana
+    env_file: conf.env
+    links:
+    - influxdb
+    ports:
+    - '3000:3000'
+    volumes:
+    - ./grafana_data:/var/lib/grafana
+
+  # =========================================
+
+  telegraf:
+    build: telegraf
+    container_name: telegraf
+    links:
+    - influxdb
+
+# =========================================
+
+volumes:
+  grafana_data: {}
+  influxdb_data: {}
